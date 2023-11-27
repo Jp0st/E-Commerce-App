@@ -43,15 +43,21 @@ router.put('/:id', async (req, res) => {
                 id: req.params.id,
             },
         });
-        if (!updateCategory) {
-            res.status(404).json({ message: 'There is no category with that id.' });
+
+        console.log('Rows affected:', updateCategory[0]); // Log the number of rows affected
+
+        if (updateCategory[0] === 0) {
+            res.status(404).json({ message: 'There is no category with that id or no changes were made.' });
             return;
         }
-        res.status(200).json(updateCategory);
+
+        res.status(200).json({ message: 'Category updated successfully.' });
     } catch (err) {
+        console.error('Error updating category:', err);
         res.status(500).json(err);
     }
 });
+
 
 router.delete('/:id', async (req, res) => {
     try {
