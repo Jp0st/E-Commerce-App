@@ -34,8 +34,10 @@ router.post('/', async (req, res) => {
             res.status(404).json({ message: 'There is no tag with that id.' });
             return;
         }
+        res.status(201).json(newTag); // Assuming 201 Created for successful creation
     } catch (err) {
-        res.status(500).json(err);
+        console.error(err); // Log the error for debugging
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 });
 

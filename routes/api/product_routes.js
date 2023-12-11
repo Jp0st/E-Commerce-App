@@ -27,24 +27,26 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/',(req, res) => {
-    Product.create(req.body)
+router.post('/', (req, res) => {
+    const { product_name, price, stock, tagIds } = req.body;
+
+    Product.create({ product_name, price, stock })
         .then((product) => {
-            if (req.body.tagIds.length) {
-                const productTagIdArr = req.body.tagIds.map((tag_id) => {
-                    return {
-                        product_id: product.id,
-                        tag_id,
-                    };
-                });
+            if (tagIds && tagIds.length) {
+                const productTagIdArr = tagIds.map((tag_id) => ({
+                    product_id: product.id,
+                    tag_id,
+                }));
                 return ProductTag.bulkCreate(productTagIdArr);
             }
-            res.status(200).json(product);
+            res.status(201).json(product); 
         })
-        .then((productTagIds) => res.status(200).json(productTagIds))
+        .then((productTagIds) => {
+            res.status(201).json({ productTagIds, message: 'Product and Tags created successfully' });
+        })
         .catch((err) => {
-            console.log(err);
-            res.status(400).json(err);
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
         });
 });
 
